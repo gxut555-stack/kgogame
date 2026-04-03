@@ -15,7 +15,7 @@ func NewUserMap() *UsersMap {
 	}
 }
 
-// //// 根据UID读取对应客户端地址
+// 根据UID读取对应客户端地址
 func (um *UsersMap) Get(uid int32) (string, bool) {
 	um.locker.RLocker()
 	defer um.locker.RUnlock()
