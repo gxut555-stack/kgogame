@@ -1,0 +1,11 @@
+[Log]
+Level = 0 #日志等级 0: DEBUG,1:STACK 2: INFO, 3: ERROR, 4: STRACE, 5: FATAL
+FileNum = 10
+FileMax = 104857600
+LogPath = "/Users/bobo/data/logs/kgogame/services"
+
+#web socket 配置
+[WebSocket]
+tls=false
+key="./etc/tiptop.bet.key"
+pem="./etc/tiptop.bet.pem"

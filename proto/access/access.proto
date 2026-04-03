@@ -1,0 +1,93 @@
+syntax = "proto2";
+
+package protoAccess; // 包名
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+//RPC通用请求消息
+message RPCRequest
+{
+    optional string RemoteIP = 1 [(gogoproto.nullable) = false]; //客户端IP
+    optional int32 RemotePort = 2 [(gogoproto.nullable) = false]; //客户端端口
+    optional int32 AccSrvID = 3 [(gogoproto.nullable) = false]; //来自的Access Server ID
+    optional int32 Seq = 4 [(gogoproto.nullable) = false]; //客户端请求的SEQ
+    optional int32 UID = 5 [(gogoproto.nullable) = false]; //客户端的UID
+    optional bytes Payload = 6 [(gogoproto.nullable) = false]; //客户端请求的数据
+    optional string ServerName = 7 [(gogoproto.nullable) = false]; //请求的服务名
+    optional string FuncName = 8 [(gogoproto.nullable) = false]; //请求的方法名
+    optional int32 RefererServerID = 9 [(gogoproto.nullable) = false]; //之前请求的有状态服务ID(源自COOKIE)
+    optional string RefererServer = 10 [(gogoproto.nullable) = false]; //之前的请求的有状态服务名(源自COOKIE)
+    optional string ExtData = 11 [(gogoproto.nullable) = false]; //透传的扩展数据
+}
+
+//RPC通用响应消息
+message RPCResponse
+{
+    optional bool Response = 1 [(gogoproto.nullable) = false]; //是否包含响应数据
+    optional string SrvName = 2 [(gogoproto.nullable) = false]; //响应服务的名称
+    optional int32 SrvID = 3 [(gogoproto.nullable) = false]; //响应服务的ID
+    optional int32 UID = 4 [(gogoproto.nullable) = false]; //响应给的UID
+    optional int32 Seq = 5 [(gogoproto.nullable) = false]; //响应包的SEQ
+    optional int32 Code = 6 [(gogoproto.nullable) = false]; //响应包的Code
+    optional int32 Cmd = 7 [(gogoproto.nullable) = false]; //响应包的Cmd
+    optional bytes Payload = 8 [(gogoproto.nullable) = false]; //响应包的数据
+    optional string Token = 9 [(gogoproto.nullable) = false]; //响应包的Token
+    optional bool SetCookie = 10 [(gogoproto.nullable) = false]; //是否需要AccessServer设置COOKIE(有状态的服务在用户进入时设置为true)
+    optional bool Disconnect = 12 [(gogoproto.nullable) = false]; //是否需要关闭连接
+}
+
+//设置登录状态请求消息
+message SetUIDReq
+{
+    optional int32 UID = 1 [(gogoproto.nullable) = false]; //UID
+    optional string RemoteIP = 2 [(gogoproto.nullable) = false]; //客户端IP
+    optional int32 RemotePort = 3 [(gogoproto.nullable) = false]; //客户端端口
+    optional string ExtData = 4 [(gogoproto.nullable) = false]; //扩展字段
+}
+
+//设置登录状态响应消息
+message SetUIDRsp
+{
+    optional int32 Code = 1 [(gogoproto.nullable) = false]; //是否成功
+    optional string Msg = 2 [(gogoproto.nullable) = false]; //错误信息
+}
+
+//发送回客户端请求
+message OperationReq
+{
+    optional int32 uid = 1 [(gogoproto.nullable) = false]; // 用户id
+    optional bytes info = 2 [(gogoproto.nullable) = false]; //发送数据
+}
+
+//通知客户端断开连接的消息
+message KickNotify
+{
+    optional int32 uid = 1 [(gogoproto.nullable) = false]; //UID
+    optional int32 reason = 2 [(gogoproto.nullable) = false]; //原因(1:异地登录;2:系统主动关闭)
+}
+
+//批量RPC通用响应消息-此消息内容必须相同
+message RPCBatchResponse
+{
+    optional bool Response = 1 [(gogoproto.nullable) = false]; //是否包含响应数据
+    optional string SrvName = 2 [(gogoproto.nullable) = false]; //响应服务的名称
+    optional int32 SrvID = 3 [(gogoproto.nullable) = false]; //响应服务的ID
+    repeated int32 UIDList = 4 ; //响应给的UID列表
+    optional int32 Seq = 5 [(gogoproto.nullable) = false]; //响应包的SEQ
+    optional int32 Code = 6 [(gogoproto.nullable) = false]; //响应包的Code
+    optional int32 Cmd = 7 [(gogoproto.nullable) = false]; //响应包的Cmd
+    optional bytes Payload = 8 [(gogoproto.nullable) = false]; //响应包的数据
+    optional string Token = 9 [(gogoproto.nullable) = false]; //响应包的Token
+}
+
+message RPCBatchResponseRow
+{
+    optional int32 Uid  = 1 [(gogoproto.nullable) = false]; //用户id
+    optional int32 Code = 2 [(gogoproto.nullable) = false]; //是否成功对应的Code
+}
+
+//批量消息结果
+message RPCBatchResponseResult
+{
+    repeated RPCBatchResponseRow results = 1 ; //结果列表
+}

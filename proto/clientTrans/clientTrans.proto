@@ -1,0 +1,39 @@
+syntax="proto2";
+
+package clientTrans; // 包名
+
+
+message Xextend
+{
+	optional int32 SrvId = 1; //服务名
+	optional int64 TableId = 2; //桌子
+	optional int64 Extend1 = 3;
+	optional int64 Extend2 = 4;
+	optional string SrvName = 5; //服务名
+	optional bytes ExtPayLoad = 6; //ExtPayLoad 信息
+}
+
+message Xcodec
+{
+	optional bytes MsgInfoK = 1; //扩展字段K
+	optional int32 Version = 2; //版本
+	optional bytes MsgInfoA = 3; //扩展字段A
+	optional int32 Seq = 4; //序列号
+	optional bytes MsgInfoB = 5; //扩展字段B
+	optional string SvnName = 6; //服务名, 发包时用
+	optional bytes MsgInfoC = 7; //扩展字段C
+	optional string FuncName = 8; //方法名, 发包时用
+	optional bytes MsgInfoD = 9; //扩展字段D
+	optional int32 Code = 10; 	//响应状态码, 回包时用
+	optional bytes MsgInfoE = 11; //扩展字段E
+	optional int32 Cmd = 12; //响应命令字, 回包时用
+	optional bytes MsgInfoF = 13; //扩展字段F
+	optional bytes Token = 14; //Token码
+	optional bytes MsgInfoG = 15; //扩展字段G
+	optional bytes PayLoad = 16; //Payload 信息
+	optional bytes MsgInfoH = 17; //扩展字段H
+	optional bytes Cookies = 18;	//Cookies 信息
+	optional bytes MsgInfoI = 19; //扩展字段I
+	optional bytes ExtendBytes = 20; //扩展信息
+	optional bytes MsgInfoJ = 21; //扩展字段J
+}

@@ -1,0 +1,446 @@
+syntax="proto2";
+
+package protoClientConfig; // 包名
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+enum TableListTab
+{
+  None = 0;
+  Normal = 1;
+  Practice = 2;
+}
+
+//取场次配置请求消息
+message TableListReq
+{
+  optional int32 gid = 1 [(gogoproto.nullable) = false]; //玩法ID
+  optional int64 version = 2 [(gogoproto.nullable) = false]; //客户端桌子配置版本号(暂时不使用，因为结果要求实时性，不缓存)
+  optional int32 tab = 3 [(gogoproto.nullable) = false]; //Tab(1:金币场(默认),2:练习)
+  repeated int32 levels = 4 ; //允许的级别列表(1:初,2:中,3:高)
+  repeated int32 seats = 5 ; //允许的座位数
+  optional int32 uid = 6 [(gogoproto.nullable) = false]; // 后端使用
+  optional bool enablePro = 7 [(gogoproto.nullable) = false]; // 是否支持Pro场(真人对战,仅对TeenPatti有效)
+  optional int32 App = 8 [(gogoproto.nullable) = false]; // 应用id
+}
+
+//场次信息
+message TableInfo
+{
+  optional int64 id = 1 [(gogoproto.nullable) = false]; // 场次配置ID
+  optional int64 carry_lower = 2 [(gogoproto.nullable) = false]; //最小携带
+  optional int64 carry_upper = 3 [(gogoproto.nullable) = false]; //最大携带
+  optional int64 table_money = 4 [(gogoproto.nullable) = false]; //小盲
+  optional int32 seats = 5 [(gogoproto.nullable) = false]; //座位数
+  optional bool need_antes = 6 [(gogoproto.nullable) = false]; //是否需要Ante
+  optional int32 level = 7 [(gogoproto.nullable) = false]; //级别(1:初,2:中,3:高)
+  optional int32 player_number = 8 [(gogoproto.nullable) = false]; //当前场次人数
+  optional int32 goodsId = 9 [(gogoproto.nullable) = false]; //商品ID ak和tp才有该字段
+  optional int32 firstGoodsId = 10 [(gogoproto.nullable) = false]; //首充商品ID
+  optional int32 bankruptGoodsId = 11 [(gogoproto.nullable) = false]; //破产商品ID
+  optional bool isPro = 12 [(gogoproto.nullable) = false]; // 是否Pro场(真人对战,仅对TeenPatti有效)
+  optional bool isAnticheating = 14 [(gogoproto.nullable) = false]; // 是否防作弊。1是；0否。（暂时只有 tongits 使用。20231206）
+  optional int32 potBetTimes = 15 [(gogoproto.nullable) = false]; // Pot下注倍数(Lucky9有效)
+  optional int64 max_bet_money = 16 [(gogoproto.nullable) = false]; //最大下注
+  optional int32 minVersion = 17 [(gogoproto.nullable) = false]; //Billiard用于管理前端球运动算法版本号
+  repeated string antiCheatChannels = 18; // 德州防作弊动态匹配渠道配置 [BP,CP...] 如果在里面，则使用TexasAllocService.EnterByAntes 快速开始进行匹配
+}
+
+//取场次配置响应消息
+message TableListRsp
+{
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false]; //code对应的错误信息
+  repeated TableInfo tables = 3; //返回数据
+  optional bool need_update = 4 [(gogoproto.nullable) = false]; //是否有更新
+  optional int64 version = 5 [(gogoproto.nullable) = false]; //配置数据版本号
+}
+
+//取服务器时间消息
+message TimeMsg
+{
+  optional int64 time = 1 [(gogoproto.nullable) = false]; //时间戳
+}
+
+//查询子游戏列表
+message SubGameListReq {
+  optional string ClientVersion = 1 [(gogoproto.nullable) = false]; //客户端版本号
+  optional int32 AppID = 2[(gogoproto.nullable) = false];
+}
+
+message SubGameInfo{
+  optional string Key = 1 [(gogoproto.nullable) = false];
+  optional string Name = 2 [(gogoproto.nullable) = false]; //游戏展示名称
+  optional string Icon = 3 [(gogoproto.nullable) = false]; //大厅图CDN地址
+  optional string IconInner = 4 [(gogoproto.nullable) = false]; //大厅图内置地址
+  optional string CodePath = 5 [(gogoproto.nullable) = false]; //代码路径
+  optional int32 GameVer = 6 [(gogoproto.nullable) = false]; //子游戏最新版本号
+  optional string GameCommSubType = 7 [(gogoproto.nullable) = false]; //需要的公共包类型
+  optional int32 GameCommVer = 8 [(gogoproto.nullable) = false]; //需要的公共包类型版本号
+  optional string CommCodePath = 9 [(gogoproto.nullable) = false]; //公共包代码路径
+  optional string nameIcon = 10 [(gogoproto.nullable) = false]; //游戏名称地址
+  optional int32 Sort = 11 [(gogoproto.nullable) = false]; //排序
+  optional string IconBack = 12 [(gogoproto.nullable) = false]; //背景图片地址
+  optional int32 Type = 13 [(gogoproto.nullable) = false]; //1:Cassino、2:Slots、3:Habilidade、4:Mini Game
+  optional int32 IsPlaying = 14 [(gogoproto.nullable) = false]; //免费用户是否可玩 1是 0否
+  optional int32 IsNew = 15 [(gogoproto.nullable) = false]; //是否新游戏 1是 0否
+  optional int32 IsHot = 16 [(gogoproto.nullable) = false]; //是否热门 1是 0否
+}
+
+message SubGameListRsp {
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false];
+  repeated SubGameInfo items = 3 [(gogoproto.nullable) = false];
+}
+
+//升级需要的信息
+message ResInfo{
+  optional string SubType = 1 [(gogoproto.nullable) = false]; //字段对应list中的返回值：子游戏为：Key，公共资源包为：GameCommSubType，语言包为：对应语言
+  optional int32 Origin = 2 [(gogoproto.nullable) = false]; //当前版本号
+  optional int32 Dest = 3 [(gogoproto.nullable) = false]; //目标版本号
+  optional bool NeedUpdate = 4 [(gogoproto.nullable) = false]; //是否需要查询升级信息
+}
+
+//返回对应子游戏需要的升级内容
+message SubGameUpdateReq {
+  optional ResInfo Game = 1 [(gogoproto.nullable) = false];
+  optional ResInfo Comm = 2 [(gogoproto.nullable) = false];
+  optional int32 AppID = 3 [(gogoproto.nullable) = false];
+}
+
+message VersionDiff{
+  optional bool CanUpdate = 1 [(gogoproto.nullable) = false];
+  optional string ZipUrl = 2 [(gogoproto.nullable) = false];
+  optional int32 ZipSize = 3 [(gogoproto.nullable) = false];
+  optional string ZipMD5 = 4 [(gogoproto.nullable) = false];
+  optional bool IsForce = 5 [(gogoproto.nullable) = false];
+}
+
+message SubGameUpdateRsp {
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false];
+  optional VersionDiff Game = 3 [(gogoproto.nullable) = false];
+  optional VersionDiff Comm = 4 [(gogoproto.nullable) = false];
+}
+
+//返回道具价格
+message EmojPriceReq {
+}
+
+message EmojPriceRsp {
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false];
+  optional int64 Price = 3 [(gogoproto.nullable) = false]; //价格
+  optional int32 CoolingTime = 4 [(gogoproto.nullable) = false];  //冷却时间
+  optional int32 IntervalSendTime = 5 [(gogoproto.nullable) = false]; //间隔发送时间
+  optional int32 IntervalSendTimes = 6 [(gogoproto.nullable) = false];//间隔发送次数
+}
+
+//返回客户端需要的一些配置
+message ClientConfigReq {
+}
+
+message ClientConfigRsp {
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false];
+  optional int64 BonusRate = 3 [(gogoproto.nullable) = false]; //输钱后转换成bonus的比例，千分之几
+  optional bool ActivityTableSwitch = 4 [(gogoproto.nullable) = false]; // 活动桌子开关 true 打开
+}
+
+//前置检查接口请求消息
+message PreviewCheckReq
+{
+  optional string packageName = 1 [(gogoproto.nullable) = false]; //包名
+  optional string sim = 2 [(gogoproto.nullable) = false]; //sim卡信息
+  optional string deviceCode = 3 [(gogoproto.nullable) = false]; //设备码
+  optional string version = 4 [(gogoproto.nullable) = false]; //版本号信息
+  optional int32 battery = 5 [(gogoproto.nullable) = false]; //电量
+  optional string promoteSource = 6 [(gogoproto.nullable) = false]; //推广来源
+  optional string inviteCode = 7 [(gogoproto.nullable) = false]; //邀请码
+}
+
+//取场次配置响应消息
+message PreviewCheckRsp
+{
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false]; //code对应的错误信息
+  optional int32 branch = 3 [(gogoproto.nullable) = false]; //选择的分支：1表示A分支；2表示B分支；
+}
+
+// 获取广播历史列表
+message GetBCHistoryListReq
+{
+  optional int32 uid = 1 [(gogoproto.nullable) = false]; // 占坑
+}
+
+message BCItem
+{
+  optional string nick = 1 [(gogoproto.nullable) = false]; //昵称
+  optional string game = 2 [(gogoproto.nullable) = false]; //游戏名称
+  optional int64 money = 3 [(gogoproto.nullable) = false]; //金钱,转换卢比需要除以1000
+  optional int64 time = 4 [(gogoproto.nullable) = false]; //发生时间
+  optional int32 tpl = 5 [(gogoproto.nullable) = false]; //使用模板
+}
+
+message GetBCHistoryListRsp
+{
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false]; //code对应的错误信息
+  repeated BCItem Items = 3;
+  map<int32, string> tpl = 4 [(gogoproto.nullable) = false]; //模板列表
+}
+
+// 获取在线人数
+message GetOnlineCntReq
+{
+  optional int32 uid = 1 [(gogoproto.nullable) = false]; // 占坑
+  optional int32 app = 2 [(gogoproto.nullable) = false]; // 应用ID
+  optional int32 gid = 3 [(gogoproto.nullable) = false]; // 游戏ID，所有游戏传0
+}
+
+message GetOnlineCntRsp
+{
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false]; //code对应的错误信息
+  optional int32 cnt = 3 [(gogoproto.nullable) = false]; //在线人数
+}
+
+//获取支付方式
+message GetPayConfigReq
+{
+  optional int32 uid = 1 [(gogoproto.nullable) = false];
+}
+
+message PayMethod
+{
+  optional string name = 1 [(gogoproto.nullable) = false];  //名称
+  optional string desc = 2 [(gogoproto.nullable) = false];  //描述
+  optional string value = 3 [(gogoproto.nullable) = false]; //值，下单的时候传给后端
+  optional string label = 4[(gogoproto.nullable) = false];  //角标，按钮上方显示加赠标识
+  optional int32 bounsRate = 5[(gogoproto.nullable) = false]; //额外加赠比率，单位(%)
+}
+
+message GetPayConfigRsp
+{
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false]; //code对应的错误信息
+  repeated PayMethod method = 3 [(gogoproto.nullable) = false];
+  optional bool bindSwitch = 4 [(gogoproto.nullable) = false]; //支付前是否需要绑定信息
+}
+
+// Adjust后端上报
+message AdjustReportReq
+{
+  optional int32 Uid = 1 [(gogoproto.nullable) = false];
+  optional int32 AppID = 2 [(gogoproto.nullable) = false];
+  optional string GPID = 3 [(gogoproto.nullable) = false];
+  optional string ADID = 4 [(gogoproto.nullable) = false];
+  optional string EventToken = 5 [(gogoproto.nullable) = false];
+  optional string AppToken = 6 [(gogoproto.nullable) = false];
+  optional int64 Revenue = 7 [(gogoproto.nullable) = false];
+  optional string Currency = 8 [(gogoproto.nullable) = false];
+  optional string PartnerParam = 9 [(gogoproto.nullable) = false];
+  optional string CallbackParam = 10 [(gogoproto.nullable) = false];
+  optional bool IsSandbox = 11 [(gogoproto.nullable) = false];
+  optional string OrderID = 12 [(gogoproto.nullable) = false];
+  optional int64 CreateAtTime = 13 [(gogoproto.nullable) = false];
+}
+
+message AdjustReportRsp
+{
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false]; //code对应的错误信息
+}
+
+//----获取桌子列表----
+//取桌子列表的请求
+message GetDisplayTableListReq
+{
+  optional int64 tableMoney   = 1[(gogoproto.nullable) = false]; //小盲
+  optional int32 maxSeatCnt   = 2[(gogoproto.nullable) = false]; //最大座位数-一般为9人
+  repeated int64 excludeTids  = 3; //客户端已经存在的桌子id
+}
+
+//桌子上的一个用户的信息
+message oneUser
+{
+  optional int32 uid          = 1[(gogoproto.nullable) = false]; //玩家id
+  optional string nick        = 2[(gogoproto.nullable) = false]; //昵称
+  optional string icon        = 3[(gogoproto.nullable) = false]; //头像地址
+  optional int32 seatId       = 4[(gogoproto.nullable) = false]; //座位号 序号从1开始
+  optional int64 carryChips   = 5[(gogoproto.nullable) = false]; //携带筹码
+}
+
+//显示的桌子信息
+message displayTableInfo
+{
+  optional int64 tid          = 1[(gogoproto.nullable) = false]; //桌子id
+  repeated oneUser users      = 2; //桌子上的用户
+  optional int32 seatNumber   = 3[(gogoproto.nullable) = false]; //N人桌的N值
+  optional int64 tableMoney   = 4[(gogoproto.nullable) = false]; //小盲
+  optional int64 CarryLower   = 5[(gogoproto.nullable) = false]; // 最小携带
+  optional int64 CarryUpper   = 6[(gogoproto.nullable) = false]; // 最大携带
+}
+
+//取桌子列表的的响应
+message GetDisplayTableListRsp
+{
+  optional int32 code                 = 1[(gogoproto.nullable) = false];//0成功 非零失败
+  repeated displayTableInfo tables    = 2;//桌子信息
+}
+
+//刷新桌子请求
+message RefreshTableInfoReq
+{
+  optional int64 tableMoney   = 1[(gogoproto.nullable) = false]; //小盲
+  optional int64 tid          = 2[(gogoproto.nullable) = false]; //桌子id
+}
+
+//刷新桌子返回
+message RefreshTableInfoRsp
+{
+  optional int32 code                 = 1[(gogoproto.nullable) = false];//0成功 非零失败
+  optional displayTableInfo table     = 2;//桌子信息
+}
+
+
+//取场次配置请求消息
+message TableConfigReq
+{
+  optional int32 gid      = 1 [(gogoproto.nullable) = false]; //玩法ID
+  optional int64 version  = 2 [(gogoproto.nullable) = false]; //客户端桌子配置版本号
+}
+
+//nlh场次信息
+message TexasNlhTableInfo
+{
+  optional int64 id           = 1 [(gogoproto.nullable) = false]; // 场次配置ID
+  optional int64 carry_lower  = 2 [(gogoproto.nullable) = false]; //最小携带
+  optional int64 carry_upper  = 3 [(gogoproto.nullable) = false]; //最大携带
+  optional int64 min_buy      = 4 [(gogoproto.nullable) = false]; //最小携带
+  optional int64 max_buy      = 5 [(gogoproto.nullable) = false]; //最大携带
+  optional int64 small_blind  = 6 [(gogoproto.nullable) = false]; //小盲
+  optional int64 prefix_blind = 7 [(gogoproto.nullable) = false]; //前注
+  optional int64 straddle_blind = 8 [(gogoproto.nullable) = false]; //straddle
+  optional int32 seats          = 9 [(gogoproto.nullable) = false]; //座位数
+  optional int32 level          = 10 [(gogoproto.nullable) = false]; //级别(1:初,2:中,3:高)
+  optional int32 GameId         = 11 [(gogoproto.nullable) = false];//玩法
+}
+
+//取场次配置响应消息
+message TableConfigRsp
+{
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false]; //code对应的错误信息
+  optional int32 gid  = 3 [(gogoproto.nullable) = false]; //请求的游戏id
+  repeated TexasNlhTableInfo nlh  = 4; //nlh 配置数据
+  optional bool need_update       = 5 [(gogoproto.nullable) = false]; //是否有更新
+  optional int64 version          = 6 [(gogoproto.nullable) = false]; //配置数据版本号
+}
+
+//游戏是否需要返回按钮
+message GameCustomItem {
+  optional int32 game_id = 1 [(gogoproto.nullable) = false]; //游戏id
+  optional int32 is_return = 2 [(gogoproto.nullable) = false]; // 是否需要返回 0false 1ture
+}
+
+//游戏配置处理数据
+message GameReturnData {
+  optional int32 game_id = 1 [(gogoproto.nullable) = false]; //游戏id
+  optional int32 is_return = 2 [(gogoproto.nullable) = false]; // 是否需要返回 0false 1ture
+  optional int32 app_id = 3 [(gogoproto.nullable) = false]; //appid
+  optional string channel = 4 [(gogoproto.nullable) = false]; // 渠道
+}
+
+//游戏返回禁用配置
+message GameReturnEnabled {
+  optional int32 app_id = 1 [(gogoproto.nullable) = false]; //appid
+  optional string channel = 2 [(gogoproto.nullable) = false]; // 渠道
+  optional bool disabled = 3 [(gogoproto.nullable) = false]; // 是否启用 false启用 true禁用
+}
+
+//游戏配置扩展数据
+message GameReturnConfig {
+  repeated  GameReturnData datas = 1; //启用配置
+  repeated  GameReturnEnabled enableds = 2; //禁用配置
+}
+
+// 请求参数结构体
+message ClientGameCustomReq {
+  optional int32 uid = 1 [(gogoproto.nullable) = false]; // uid非必填
+}
+
+// 响应消息结构体
+message ClientGameCustomRsp {
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false];
+  repeated  GameCustomItem GameReturnConfig = 3 [(gogoproto.nullable) = false]; //
+  optional bool ActivityTableSwitch = 4 [(gogoproto.nullable) = false]; // 活动桌子开关 true 打开
+  repeated  GameLogoDisplayItem GameLogoDisplayConfig = 5 [(gogoproto.nullable) = false]; //游戏场次Logo显示配置
+  optional bool IsReturnWhiteUid = 6 [(gogoproto.nullable) = false]; // 是否是返回按钮白名单用户
+  repeated CornerMarkerDisplayConfig CornerMarker = 7; //角标显示配置
+}
+
+message CornerMarkerDisplayConfig {
+  optional int64  StartTime = 1  [(gogoproto.nullable) = false]; // 开始时间
+  optional int64  EndTime   = 2  [(gogoproto.nullable) = false]; // 结束时间
+  optional string ImgUrl    = 3  [(gogoproto.nullable) = false]; // 图片地址
+  repeated int32  GameIdList = 4; // 游戏id列表
+}
+
+// 角标显示配置列表
+message CornerMarkerDisplayConfigList {
+  repeated CornerMarkerDisplayItem CornerMarkerItemList = 1; //角标显示配置
+}
+
+// 角标显示配置项
+message CornerMarkerDisplayItem {
+  optional int32  app_id = 1 [(gogoproto.nullable) = false]; //appid
+  optional string channel = 2 [(gogoproto.nullable) = false]; // 渠道
+  optional CornerMarkerDisplayConfig CornerMarker = 3; //角标显示配置
+  optional int32 ID = 4 [(gogoproto.nullable) = false]; // 角标显示配置ID
+}
+
+//游戏场次logo显示配置
+message GameLogoDisplayItem {
+  optional int32 game_id = 1 [(gogoproto.nullable) = false]; //游戏id
+  optional int32 is_display = 2 [(gogoproto.nullable) = false]; // 是否需要显示 0false 1ture
+}
+
+
+//游戏配置处理数据
+message GameLogoDisplayData {
+  optional int32 game_id = 1 [(gogoproto.nullable) = false]; //游戏id
+  optional int32 is_display = 2 [(gogoproto.nullable) = false]; // 是否需要返回 0false 1ture
+  optional int32 app_id = 3 [(gogoproto.nullable) = false]; //appid
+  optional string channel = 4 [(gogoproto.nullable) = false]; // 渠道
+}
+
+//游戏公共资源获取
+message GameCommonResourceReq{
+  optional int32 uid = 1 [(gogoproto.nullable) = false];
+  optional int64 updateTime = 2 [(gogoproto.nullable) = false]; //上一次更新时间
+}
+
+message GidImageItem{
+  optional int32 gameId = 1 [(gogoproto.nullable) = false];
+  optional string imagePath = 2 [(gogoproto.nullable) = false];
+}
+message GameCommonResourceRsp{
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //0成功 非零失败
+  optional string msg = 2 [(gogoproto.nullable) = false];
+  repeated GidImageItem GidImageList = 3;
+  optional int64 updateTime = 4 [(gogoproto.nullable) = false]; //上一次更新时间
+  optional bool needUpdate = 5 [(gogoproto.nullable) = false]; //是否有更新
+}
+
+//获取玩家kyc状态
+message MatchKycStatusReq{
+  optional int32 uid = 1 [(gogoproto.nullable) = false];
+}
+
+message MatchKycStatusRsp{
+  optional int32 code = 1 [(gogoproto.nullable) = false]; //状态码
+  optional string msg = 2 [(gogoproto.nullable) = false]; //错误消息
+  optional bool limit = 3[(gogoproto.nullable) = false]; //玩家kyc状态比赛列表站点开关 false:关，不做任何限制 ture:开，只显示free赛事列表
+}
