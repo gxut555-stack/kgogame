@@ -14,6 +14,4 @@ std*.txt
 *.debug.log
 *_server.log
 *_table.log
-/tools/hrh/
-/tools/yuj/
-/tools/wind/
+*.idea
