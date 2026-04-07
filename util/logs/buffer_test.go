@@ -1,10 +1,3 @@
-/**
- * @Author: Chen Bin
- * @File: buffer_test
- * @Date: 2022/6/13 11:23
- * @Description:
- * @Copyright 2020 BigFish. All rights reserved.
- */
 package logs
 
 import (

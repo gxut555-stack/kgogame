@@ -1,10 +1,3 @@
-/**
- * @Author: Chen Bin
- * @File: frame.go
- * @Date: 2024-11-06 10:48:41
- * @Description:
- */
-
 package ws
 
 import (

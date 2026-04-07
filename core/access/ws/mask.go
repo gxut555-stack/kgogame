@@ -1,10 +1,3 @@
-/**
- * @Author: Chen Bin
- * @File: mask.go
- * @Date: 2024-11-06 10:48:07
- * @Description:
- */
-
 package ws
 
 import "unsafe"

@@ -1,10 +1,3 @@
-/**
- * @Author: Chen Bin
- * @File: random.go
- * @Date: 2024-03-11 17:27:19
- * @Description:
- */
-
 package random
 
 type Rand struct {

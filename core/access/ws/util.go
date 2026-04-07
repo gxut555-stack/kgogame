@@ -1,10 +1,3 @@
-/**
- * @Author: Chen Bin
- * @File: util.go
- * @Date: 2024-11-06 10:49:13
- * @Description:
- */
-
 package ws
 
 import (

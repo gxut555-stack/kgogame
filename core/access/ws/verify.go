@@ -1,10 +1,3 @@
-/**
- * @Author: Chen Bin
- * @File: verify.go
- * @Date: 2024-11-06 10:50:03
- * @Description:
- */
-
 package ws
 
 import (

@@ -1,10 +1,3 @@
-/**
- * @Author: Chen Bin
- * @File: warp.go
- * @Date: 2024-09-02 18:33:49
- * @Description: go 协程封装器
- */
-
 package gowarp
 
 import "sync/atomic"

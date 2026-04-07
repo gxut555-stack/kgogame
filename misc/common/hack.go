@@ -1,10 +1,3 @@
-/**
- * @Author: Chen Bin
- * @File: hack.go
- * @Date: 2024-07-29 15:57:36
- * @Description: go 的魔法操作 要使用此接口的方法要评估影响，后续go版本如果有改动有可能导致失效
- */
-
 package common
 
 import (
